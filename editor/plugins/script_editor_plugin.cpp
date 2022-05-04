@@ -348,6 +348,39 @@ void ScriptEditor::_update_history_arrows() {
 	script_forward->set_disabled(history_pos >= history.size() - 1);
 }
 
+void ScriptEditor::_update_current_history_state() {
+	if (_active_history_save_depth == 0) {
+		if (history_pos >= 0 && history_pos < history.size() && history[history_pos].control == tab_container->get_current_tab_control()) {
+			Node *n = tab_container->get_current_tab_control();
+
+			if (Object::cast_to<ScriptEditorBase>(n)) {
+				history.write[history_pos].state = Object::cast_to<ScriptEditorBase>(n)->get_edit_state();
+			}
+			if (Object::cast_to<EditorHelp>(n)) {
+				history.write[history_pos].state = Object::cast_to<EditorHelp>(n)->get_scroll();
+			}
+		}
+	}
+
+	_active_history_save_depth++;
+}
+
+void ScriptEditor::_save_new_history() {
+	_active_history_save_depth--;
+
+	if (_active_history_save_depth == 0) {
+		history.resize(history_pos + 1);
+		ScriptHistory sh;
+		sh.control = tab_container->get_current_tab_control();
+		sh.state = Variant();
+
+		history.push_back(sh);
+		history_pos++;
+
+		_update_history_arrows();
+	}
+}
+
 void ScriptEditor::_save_history() {
 	if (history_pos >= 0 && history_pos < history.size() && history[history_pos].control == tab_container->get_current_tab_control()) {
 		Node *n = tab_container->get_current_tab_control();

@@ -261,6 +261,7 @@ class ScriptEditor : public PanelContainer {
 
 	Vector<ScriptHistory> history;
 	int history_pos;
+	int _active_history_save_depth;
 
 	List<String> previous_scripts;
 	List<int> script_close_queue;
@@ -386,6 +387,8 @@ class ScriptEditor : public PanelContainer {
 	void _help_class_open(const String &p_class);
 	void _help_class_goto(const String &p_desc);
 	void _update_history_arrows();
+	void _update_current_history_state();
+	void _save_new_history();
 	void _save_history();
 	void _go_to_tab(int p_idx);
 	void _update_history_pos(int p_new_pos);
